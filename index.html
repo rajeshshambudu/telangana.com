@@ -4,136 +4,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TS Licensed Surveyors | Official Association Portal</title>
+    <title>TS Licensed Surveyors | Official Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        .gov-blue { background-color: #002147; }
-        .accent-orange { color: #f97316; }
+        .gov-navy { background-color: #002147; }
+        .hero-gradient { background: linear-gradient(135deg, #002147 0%, #003366 100%); }
+        @media print {
+            body * { visibility: hidden; }
+            #printSection, #printSection * { visibility: visible; }
+            #printSection { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900">
 
-    <nav class="bg-white border-b-4 border-orange-500 shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 h-20 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fas fa-certificate text-3xl text-blue-900"></i>
+    <nav class="bg-white border-b-4 border-orange-500 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-24 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="bg-slate-100 p-2 rounded">
+                    <i class="fas fa-monument text-3xl text-blue-900"></i>
+                </div>
                 <div>
                     <h1 class="text-xl font-bold text-blue-900 leading-none">TSLSA</h1>
-                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Telangana State Licensed Surveyors Association</p>
+                    <p class="text-xs uppercase tracking-widest text-slate-500 font-bold mt-1">Telangana State Licensed Surveyors Association</p>
                 </div>
             </div>
-            <div class="hidden md:flex space-x-8 font-bold text-xs uppercase tracking-wider text-slate-600">
+            <div class="hidden md:flex space-x-6 text-sm font-bold text-slate-700 uppercase tracking-wider">
                 <a href="#home" class="hover:text-blue-900">Home</a>
-                <a href="#directory" class="hover:text-blue-900">Member Search</a>
-                <a href="#grievance" class="bg-blue-900 text-white px-4 py-2 rounded shadow-md">Grievance Cell</a>
+                <a href="#directory" class="hover:text-blue-900">Verify Surveyor</a>
             </div>
         </div>
     </nav>
 
-    <header id="home" class="gov-blue text-white py-24 relative overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
-            <h2 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Official Surveyor <br>Verification Portal</h2>
-            <p class="text-blue-100 text-lg max-w-2xl mx-auto mb-10">Verify licensed professionals and ensure the accuracy of land demarcation in Telangana.</p>
-            <a href="#directory" class="bg-orange-500 hover:bg-orange-600 px-10 py-4 rounded-lg font-bold shadow-xl transition inline-block">Search Licensed Surveyors</a>
+    <header id="home" class="hero-gradient text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-extrabold mb-4">Land Record Integrity Portal</h2>
+            <p class="text-blue-100 text-lg max-w-2xl mx-auto mb-8">Official database for licensed land surveyors in Telangana.</p>
         </div>
-        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 40px 40px;"></div>
     </header>
 
-    <section id="directory" class="py-20 max-w-7xl mx-auto px-4">
-        <div class="text-center mb-12">
-            <h3 class="text-3xl font-bold text-blue-900">Licensed Member Directory</h3>
-            <p class="text-slate-500 mt-2 italic">Search by Name, License Number, or Mandal</p>
+    <section id="directory" class="py-12 max-w-7xl mx-auto px-4">
+        <div id="verifyBanner" class="hidden bg-green-50 border-2 border-green-500 p-4 rounded-xl mb-6 flex items-center gap-4">
+            <div class="bg-green-500 text-white p-3 rounded-full"><i class="fas fa-user-check"></i></div>
+            <div>
+                <h4 class="font-bold text-green-900">Official Verification Active</h4>
+                <p class="text-sm text-green-700">Displaying authenticated record from TSLSA database.</p>
+            </div>
+            <a href="index.html" class="ml-auto text-xs font-bold text-green-800 underline">Clear Filter</a>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-4 mb-8 bg-white p-6 rounded-xl shadow-sm border">
-            <input type="text" id="nameInput" onkeyup="searchSurveyors()" placeholder="Name / License ID..." class="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-900">
-            <select id="distSelect" onchange="searchSurveyors()" class="p-3 border rounded-lg bg-white outline-none focus:ring-2 focus:ring-blue-900">
+        <div class="mb-10 flex justify-between items-end">
+            <div>
+                <h3 class="text-2xl font-bold text-blue-900 border-l-4 border-orange-500 pl-4">Member Directory</h3>
+                <p class="text-slate-500 mt-2">Search by name, district, or license number.</p>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-4 mb-8">
+            <input type="text" id="nameInput" onkeyup="searchSurveyors()" placeholder="Name or License..." class="p-4 border rounded-lg outline-none focus:ring-2 focus:ring-blue-900 shadow-sm">
+            <select id="districtSelect" onchange="searchSurveyors()" class="p-4 border rounded-lg bg-white shadow-sm">
                 <option value="">All Districts</option>
                 <option value="Hyderabad">Hyderabad</option>
                 <option value="Nizamabad">Nizamabad</option>
                 <option value="Warangal">Warangal</option>
+                <option value="Rangareddy">Rangareddy</option>
             </select>
-            <input type="text" id="mandalInput" onkeyup="searchSurveyors()" placeholder="Search Mandal..." class="p-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-900">
+            <input type="text" id="mandalInput" onkeyup="searchSurveyors()" placeholder="Mandal..." class="p-4 border rounded-lg shadow-sm">
+            <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg flex items-center justify-center gap-2 transition">
+                <i class="fas fa-file-csv"></i> Export CSV
+            </button>
         </div>
 
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden border">
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-slate-50 border-b font-bold text-slate-500 text-xs uppercase">
-                    <tr>
-                        <th class="px-6 py-4">ID</th>
-                        <th class="px-6 py-4">Full Name</th>
-                        <th class="px-6 py-4">Jurisdiction</th>
-                        <th class="px-6 py-4 text-center">Status</th>
-                    </tr>
-                </thead>
-                <tbody id="memberBody" class="divide-y divide-slate-100">
-                    </tbody>
-            </table>
-        </div>
-    </section>
-
-    <section id="grievance" class="bg-slate-100 py-20">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="bg-white p-10 rounded-3xl shadow-2xl border-t-8 border-blue-950">
-                <h3 class="text-2xl font-bold mb-6 text-blue-900 text-center uppercase tracking-tight">Public Grievance Redressal</h3>
-                <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST" class="space-y-4">
-                    <input type="hidden" name="_next" value="https://yourusername.github.io/thanks.html">
-                    
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <input type="text" name="name" placeholder="Your Full Name" required class="p-4 bg-gray-50 border rounded-xl outline-none focus:border-blue-900">
-                        <input type="text" name="license_ref" placeholder="Surveyor License (if known)" class="p-4 bg-gray-50 border rounded-xl outline-none focus:border-blue-900">
-                    </div>
-                    <input type="email" name="email" placeholder="Your Email (For Acknowledgement)" required class="p-4 bg-gray-50 border rounded-xl w-full outline-none focus:border-blue-900">
-                    <textarea name="complaint" rows="5" placeholder="Details of your grievance..." required class="p-4 bg-gray-50 border rounded-xl w-full outline-none focus:border-blue-900"></textarea>
-                    
-                    <button type="submit" class="w-full gov-blue text-white font-bold py-4 rounded-xl shadow-lg hover:opacity-90 transition">Send Formal Grievance</button>
-                </form>
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-100 text-slate-600 text-xs font-bold uppercase">
+                        <tr>
+                            <th class="px-6 py-4">License No.</th>
+                            <th class="px-6 py-4">Name</th>
+                            <th class="px-6 py-4">Location</th>
+                            <th class="px-6 py-4 text-center">Status</th>
+                            <th class="px-6 py-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="memberTable" class="divide-y divide-slate-100"></tbody>
+                </table>
             </div>
         </div>
     </section>
 
-    <footer class="bg-slate-900 text-slate-500 py-12 text-center text-xs">
-        <p>&copy; 2025 Telangana State Licensed Surveyors Association. All Rights Reserved.</p>
+    <div id="printSection" class="hidden p-10 bg-white text-black border-[10px] border-double border-slate-300">
+        <div class="text-center border-b-2 border-orange-500 pb-6 mb-8">
+            <h1 class="text-2xl font-bold uppercase tracking-widest">Telangana State Licensed Surveyors Association</h1>
+            <p class="text-sm font-semibold text-slate-600 mt-1">Official Verification Certificate</p>
+        </div>
+        <div class="flex justify-between items-start mb-10">
+            <div>
+                <p class="text-[10px] uppercase text-slate-500 font-bold">Registration No</p>
+                <p id="printID" class="text-xl font-mono font-bold text-blue-900"></p>
+            </div>
+            <div id="qrcode" class="border p-1 bg-white"></div>
+        </div>
+        <div class="bg-slate-50 p-8 rounded-lg border border-slate-200 mb-8">
+            <h2 id="printName" class="text-4xl font-bold mb-4"></h2>
+            <p class="text-sm">Licensed to practice land surveying in:</p>
+            <p class="font-bold text-lg"><span id="printMandal"></span>, <span id="printDist"></span></p>
+        </div>
+        <div class="flex justify-between items-end mt-24">
+            <div class="text-center"><div class="w-32 border-b border-black mb-1"></div><p class="text-[10px] font-bold uppercase">Authorized Signatory</p></div>
+            <p class="text-[10px] text-slate-400">Generated on: <span id="printDate"></span></p>
+        </div>
+    </div>
+
+    <footer class="gov-navy text-white py-12 text-center">
+        <p class="text-sm opacity-70">&copy; 2025 TSLSA Official Portal.</p>
+        <a href="YOUR_GOOGLE_SHEET_URL" target="_blank" class="text-[10px] text-slate-500 mt-4 block hover:text-white transition">Staff Admin Login</a>
     </footer>
 
     <script>
         let surveyors = [];
-        async function load() {
+        // STEP 1: Replace this URL with your Published Google Sheet CSV link
+        const SHEET_CSV_URL = 'YOUR_CSV_URL_HERE';
+
+        async function loadData() {
             try {
-                const r = await fetch('surveyors.json');
-                surveyors = await r.json();
-                render(surveyors);
-            } catch(e) { console.error(e); }
+                const response = await fetch(SHEET_CSV_URL);
+                const data = await response.text();
+                const rows = data.split('\n').slice(1);
+                surveyors = rows.map(row => {
+                    const cols = row.split(',');
+                    return { id: cols[0]?.trim(), name: cols[1]?.trim(), dist: cols[2]?.trim(), mandal: cols[3]?.trim(), status: cols[4]?.trim() };
+                }).filter(s => s.id);
+
+                const urlParams = new URLSearchParams(window.location.search);
+                const verifyId = urlParams.get('id');
+
+                if (verifyId) {
+                    document.getElementById('verifyBanner').classList.remove('hidden');
+                    renderTable(surveyors.filter(s => s.id === verifyId));
+                } else {
+                    renderTable(surveyors);
+                }
+            } catch (err) { console.error("Sheet Load Error:", err); }
         }
-        function render(data) {
-            document.getElementById('memberBody').innerHTML = data.map(s => `
+
+        function renderTable(data) {
+            const table = document.getElementById('memberTable');
+            table.innerHTML = data.map(s => `
                 <tr class="hover:bg-blue-50 transition">
-                    <td class="px-6 py-4 font-mono font-bold text-blue-900 text-sm">${s.id}</td>
-                    <td class="px-6 py-4 font-semibold text-slate-800">${s.name}</td>
-                    <td class="px-6 py-4 text-slate-500 text-sm">${s.mandal}, ${s.dist}</td>
+                    <td class="px-6 py-4 font-mono font-bold text-blue-800">${s.id}</td>
+                    <td class="px-6 py-4 font-bold text-slate-800">${s.name}</td>
+                    <td class="px-6 py-4 text-slate-500">${s.mandal}, ${s.dist}</td>
                     <td class="px-6 py-4 text-center">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase ${s.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                            ${s.status}
-                        </span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${s.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${s.status}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="printOfficialID('${s.id}')" class="bg-slate-100 hover:bg-blue-900 hover:text-white p-2 rounded transition">
+                            <i class="fas fa-print"></i>
+                        </button>
                     </td>
                 </tr>
             `).join('');
         }
+
         function searchSurveyors() {
-            const n = document.getElementById('nameInput').value.toLowerCase();
-            const d = document.getElementById('distSelect').value.toLowerCase();
-            const m = document.getElementById('mandalInput').value.toLowerCase();
+            const name = document.getElementById('nameInput').value.toLowerCase();
+            const dist = document.getElementById('districtSelect').value.toLowerCase();
+            const mandal = document.getElementById('mandalInput').value.toLowerCase();
             const filtered = surveyors.filter(s => 
-                (s.name.toLowerCase().includes(n) || s.id.toLowerCase().includes(n)) &&
-                (d === "" || s.dist.toLowerCase() === d) &&
-                (s.mandal.toLowerCase().includes(m))
+                (s.name.toLowerCase().includes(name) || s.id.toLowerCase().includes(name)) &&
+                (dist === "" || s.dist.toLowerCase() === dist) &&
+                (s.mandal.toLowerCase().includes(mandal))
             );
-            render(filtered);
+            renderTable(filtered);
         }
-        load();
+
+        function printOfficialID(id) {
+            const s = surveyors.find(item => item.id === id);
+            document.getElementById('printID').innerText = s.id;
+            document.getElementById('printName').innerText = s.name;
+            document.getElementById('printMandal').innerText = s.mandal;
+            document.getElementById('printDist').innerText = s.dist;
+            document.getElementById('printDate').innerText = new Date().toLocaleDateString('en-IN');
+            
+            const qrContainer = document.getElementById("qrcode");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: window.location.origin + window.location.pathname + "?id=" + s.id,
+                width: 100, height: 100
+            });
+
+            setTimeout(() => { window.print(); }, 500);
+        }
+
+        function exportToCSV() {
+            let csv = "License No,Name,Mandal,District,Status\n" + surveyors.map(s => `${s.id},${s.name},${s.mandal},${s.dist},${s.status}`).join("\n");
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'TSLSA_Directory.csv');
+            a.click();
+        }
+
+        loadData();
     </script>
 </body>
 </html>
