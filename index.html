@@ -1,220 +1,316 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TSLS | Licensed Surveyors Directory</title>
+    <title>TSLS | Licensed Surveyors Official Directory</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@600;700&family=Inter:wght@400;600;700;800&display=swap');
 
-        :root {
-            --gov-green: #004d40;
-            --gov-orange: #ff9933;
-        }
-
-        body { font-family: 'Inter', sans-serif; background-color: #f4f7f6; }
+        :root { --gov-green: #004d40; --gov-orange: #ff9933; }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; scroll-behavior: smooth; }
         .serif-title { font-family: 'Crimson Text', serif; }
         
-        /* Administrative Header Styling */
-        .gov-header-bg { background-color: white; border-bottom: 3px solid var(--gov-orange); }
-        .gov-subheader { background-color: var(--gov-green); color: white; }
-        
-        /* Table Ledger Look */
-        .table-container { border-radius: 4px; overflow: hidden; border: 1px solid #d1d5db; }
-        thead th { 
-            background-color: #f8fafc; 
-            color: #475569; 
-            border-bottom: 2px solid #e2e8f0;
-            font-size: 11px !important;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+        /* Official Header Accents */
+        .gov-header { background: white; border-bottom: 3px solid var(--gov-orange); }
+        .gov-bar { background: var(--gov-green); color: white; }
 
-        /* Print Logic */
+        /* Print Settings */
         @media print {
             body * { visibility: hidden; }
-            #printSection, #printSection * { visibility: visible; }
+            #printSection, #printSection *, #bulkPrintSection, #bulkPrintSection * { visibility: visible; }
             #printSection { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+            #bulkPrintSection { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+            .no-print { display: none !important; }
+        }
+
+        /* PVC Card Styling */
+        .pvc-card {
+            width: 320px; height: 500px; border: 1px solid #ddd;
+            background: white; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin: auto;
+        }
+        .watermark {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 150px; opacity: 0.03; pointer-events: none;
         }
     </style>
 </head>
 <body class="text-slate-900">
 
-<div class="h-1.5 w-full flex">
+<div class="h-1.5 w-full flex no-print">
     <div class="h-full w-1/3 bg-[#FF9933]"></div>
     <div class="h-full w-1/3 bg-white"></div>
     <div class="h-full w-1/3 bg-[#138808]"></div>
 </div>
 
-<nav class="gov-header-bg py-4 shadow-sm">
+<nav class="gov-header py-4 shadow-sm no-print">
     <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
         <div class="flex items-center space-x-4">
-            <div class="text-[#004d40]">
-                <i class="fas fa-shield-halved text-5xl"></i>
-            </div>
+            <i class="fas fa-shield-halved text-5xl text-[#004d40]"></i>
             <div class="border-l-2 border-slate-300 pl-4">
-                <h1 class="serif-title text-2xl md:text-3xl font-bold text-slate-800 leading-none">
-                    TSLS DIRECTORY
-                </h1>
-                <p class="text-[10px] md:text-xs font-extrabold text-[#138808] uppercase tracking-[0.2em] mt-1">
-                    Licensed Surveyors Verification System
-                </p>
+                <h1 class="serif-title text-2xl md:text-3xl font-bold text-slate-800 leading-none uppercase">TSLS Directory</h1>
+                <p class="text-[10px] md:text-xs font-extrabold text-[#138808] uppercase tracking-[0.2em] mt-1">Licensed Surveyors Verification System</p>
             </div>
         </div>
         <div class="mt-4 md:mt-0 text-center md:text-right">
-            <p class="text-[10px] font-black text-red-600 uppercase tracking-widest">Community Resource</p>
-            <p class="text-[9px] text-slate-500 uppercase font-bold">Independent of TSLSA Authority</p>
+            <span id="adminBadge" class="hidden bg-red-100 text-red-700 text-[10px] font-black px-2 py-1 rounded mb-1 inline-block">ADMIN MODE</span>
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Community Resource Portal</p>
         </div>
     </div>
 </nav>
 
-<div class="gov-subheader py-2.5 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center text-[11px] font-bold uppercase tracking-widest">
-        <span><i class="fas fa-file-invoice mr-2 opacity-70"></i> Public Search Portal</span>
-        <span class="hidden md:block opacity-80"><i class="fas fa-calendar-day mr-1"></i> <span id="currentDate"></span></span>
+<div class="gov-bar py-2 no-print">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between text-[11px] font-bold uppercase tracking-widest">
+        <span><i class="fas fa-database mr-2"></i> Verified Registry</span>
+        <span id="clock"></span>
     </div>
 </div>
 
-<header class="bg-white border-b border-slate-200 py-10">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-        <h2 class="serif-title text-3xl font-bold text-slate-800 mb-2">Search Member Directory</h2>
-        <div class="w-24 h-1 bg-[#ff9933] mx-auto mb-4"></div>
-        <p class="text-slate-500 text-sm max-w-2xl mx-auto font-medium">
-            Verify the credentials of Licensed Surveyors across Telangana. Filter by Name, Mandal, or District.
-        </p>
-    </div>
-</header>
-
-<main class="py-8 max-w-7xl mx-auto px-4">
-
-    <div class="bg-white p-6 border border-slate-200 shadow-sm mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+<main class="py-10 max-w-7xl mx-auto px-4 no-print">
+    
+    <div class="bg-white p-6 border border-slate-200 shadow-sm rounded-lg mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="flex flex-col">
-            <label class="text-[10px] font-black uppercase text-slate-400 mb-1">Search Record</label>
-            <input type="text" id="nameInput" onkeyup="searchSurveyors()" placeholder="Name or Phone..." class="border p-3 text-sm focus:border-green-800 outline-none transition">
+            <label class="text-[10px] font-black uppercase text-slate-400 mb-1">Search Name/Phone</label>
+            <input type="text" id="nameInput" onkeyup="searchSurveyors()" class="border p-3 text-sm outline-none focus:border-green-700">
         </div>
         <div class="flex flex-col">
             <label class="text-[10px] font-black uppercase text-slate-400 mb-1">District</label>
-            <select id="districtSelect" onchange="searchSurveyors()" class="border p-3 text-sm bg-white focus:border-green-800 outline-none">
+            <select id="districtSelect" onchange="searchSurveyors()" class="border p-3 text-sm bg-white outline-none focus:border-green-700">
                 <option value="">All Districts</option>
             </select>
         </div>
         <div class="flex flex-col">
             <label class="text-[10px] font-black uppercase text-slate-400 mb-1">Mandal Filter</label>
-            <input type="text" id="mandalInput" onkeyup="searchSurveyors()" placeholder="Enter Mandal..." class="border p-3 text-sm focus:border-green-800 outline-none">
+            <input type="text" id="mandalInput" onkeyup="searchSurveyors()" class="border p-3 text-sm outline-none focus:border-green-700">
         </div>
-        <div class="flex flex-col justify-end">
-            <button onclick="exportToCSV()" class="bg-slate-800 text-white font-bold text-xs uppercase py-4 hover:bg-black transition flex items-center justify-center gap-2">
-                <i class="fas fa-download"></i> Export Records
-            </button>
+        <div class="flex items-end gap-2">
+            <button onclick="exportToCSV()" class="flex-1 bg-slate-800 text-white font-bold text-[10px] uppercase py-3.5 hover:bg-black transition"><i class="fas fa-download mr-2"></i> CSV</button>
+            <button onclick="printBulkIDs()" class="flex-1 bg-orange-600 text-white font-bold text-[10px] uppercase py-3.5 hover:bg-orange-700 transition"><i class="fas fa-id-card mr-2"></i> Bulk ID</button>
         </div>
     </div>
 
-    <div class="bg-white table-container shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr>
-                        <th class="px-6 py-4 border-r">Surveyor Information</th>
-                        <th class="px-6 py-4 border-r hidden md:table-cell">Assigned Jurisdiction</th>
-                        <th class="px-6 py-4 text-center border-r">Status</th>
-                        <th class="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="memberTable" class="divide-y divide-slate-200">
-                    </tbody>
-            </table>
-        </div>
+    <div class="bg-white border border-slate-200 shadow-xl rounded-lg overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 text-[11px] font-black uppercase text-slate-500 border-b">
+                <tr>
+                    <th class="px-6 py-4">Surveyor Details</th>
+                    <th class="px-6 py-4 hidden md:table-cell">Jurisdiction</th>
+                    <th class="px-6 py-4 text-center">Status</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="memberTable" class="divide-y divide-slate-100"></tbody>
+        </table>
     </div>
 </main>
 
-<footer class="bg-slate-900 text-white py-12 border-t-4 border-[#ff9933]">
-    <div class="max-w-7xl mx-auto px-4 text-center">
-        <p class="text-xs font-bold opacity-60 tracking-widest uppercase mb-4">&copy; 2025 TSLS Community Project</p>
-        <div class="text-[10px] opacity-40 uppercase font-black flex justify-center gap-6 mb-6">
-            <span>Verified Registry</span>
-            <span>Terms of Access</span>
-            <span>Data Policy</span>
+<div id="printSection" class="hidden">
+    <div class="pvc-card" id="singleCardContent">
         </div>
-        <p class="text-[11px] leading-relaxed text-slate-400 italic max-w-3xl mx-auto border-t border-white/10 pt-6">
-            <strong>Disclaimer:</strong> This portal is a community-driven database for identification purposes only. It is not an official government website. All information is based on community contributions and publicly available data.
-        </p>
+</div>
+
+<div id="bulkPrintSection" class="hidden p-8">
+    <div id="bulkGrid" class="grid grid-cols-2 gap-8"></div>
+</div>
+
+<div id="legalModal" class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+    <div class="bg-white w-full max-w-xl rounded-xl shadow-2xl overflow-hidden border-t-8 border-[#004d40]">
+        <div class="p-8">
+            <h3 id="modalTitle" class="serif-title text-2xl font-bold mb-4 uppercase"></h3>
+            <div id="modalContent" class="text-sm text-slate-600 space-y-4 leading-relaxed"></div>
+            <button onclick="closeModal('legalModal')" class="mt-8 w-full bg-slate-800 text-white py-3 rounded font-bold uppercase text-xs">Close</button>
+        </div>
     </div>
+</div>
+
+<div id="loginModal" class="fixed inset-0 z-[110] hidden bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 no-print">
+    <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-8 border-t-8 border-blue-900 text-center">
+        <i class="fas fa-user-shield text-4xl text-blue-900 mb-4"></i>
+        <h3 class="serif-title text-xl font-bold uppercase mb-6">Staff Access</h3>
+        <input type="password" id="adminPass" class="w-full border p-3 rounded mb-4 outline-none focus:border-blue-900" placeholder="Password">
+        <button onclick="checkLogin()" class="w-full bg-blue-900 text-white py-3 rounded font-bold uppercase text-xs">Login</button>
+        <button onclick="closeModal('loginModal')" class="mt-4 text-[10px] text-slate-400 uppercase font-bold">Cancel</button>
+    </div>
+</div>
+
+<footer class="bg-[#002147] text-white pt-16 pb-8 no-print mt-20">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12 border-b border-white/10 pb-12">
+        <div>
+            <h4 class="serif-title text-xl font-bold mb-4 uppercase tracking-wider text-[#ff9933]">TSLS Directory</h4>
+            <p class="text-xs text-slate-400 italic leading-relaxed">A community effort to verify the professional standards of surveyors across Telangana State.</p>
+        </div>
+        <div>
+            <h4 class="serif-title text-xl font-bold mb-4 uppercase tracking-wider text-[#ff9933]">Legal</h4>
+            <ul class="text-[10px] font-black uppercase space-y-3 opacity-60">
+                <li><button onclick="showLegal('privacy')">Privacy Policy</button></li>
+                <li><button onclick="showLegal('terms')">Terms of Use</button></li>
+            </ul>
+        </div>
+        <div class="text-right">
+            <button onclick="showLogin()" class="text-[10px] font-black bg-white/10 px-4 py-2 rounded">Staff Login</button>
+            <button onclick="logout()" id="logoutBtn" class="hidden text-[10px] font-black bg-red-600/20 px-4 py-2 rounded ml-2">Logout</button>
+        </div>
+    </div>
+    <p class="text-[9px] text-center mt-8 opacity-30 uppercase tracking-[0.4em]">© 2025 TSLS Community Project</p>
 </footer>
 
 <script>
 let surveyors = [];
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1GTQ3JvpM3f6VeEvAjFzQtXAFSwXSU-M8ZAuBRrUuic8/export?format=csv';
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1GTQ3JvpM3f6VeEvAjFzQtXAFSwXSU-M8ZAuBRrUuic8/export?format=csv';
 
-document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
-
-async function loadData() {
-    const tableBody = document.getElementById('memberTable');
-    tableBody.innerHTML = `<tr><td colspan="4" class="p-20 text-center text-slate-400 font-bold uppercase tracking-widest animate-pulse">Initializing Secure Database...</td></tr>`;
-
-    try {
-        const response = await fetch(SHEET_CSV_URL);
-        const csvData = await response.text();
-        const rows = csvData.split('\n').slice(1);
-        surveyors = rows.map((row,index)=>{
-            const cols = row.split(',');
-            return { 
-                id: cols[0]?.trim()||`TS-LS-${index+100}`, 
-                name: cols[1]?.trim(), 
-                dist: cols[2]?.trim(), 
-                mandal: cols[3]?.trim(), 
-                status: cols[4]?.trim()||'Active', 
-                phone: cols[5]?.trim()||'N/A'
-            };
-        }).filter(s=>s.name && s.name.toLowerCase()!=='not mentioned');
-
-        populateDistricts();
-        renderTable(surveyors);
-    } catch(err){
-        tableBody.innerHTML=`<tr><td colspan="4" class="p-20 text-center text-red-600 font-bold uppercase">Connection Timeout: Unable to fetch registry records.</td></tr>`;
-    }
+// Initialize
+async function init() {
+    updateClock();
+    setInterval(updateClock, 1000);
+    await loadData();
+    checkAdminState();
 }
 
-function renderTable(data){
-    const tableBody=document.getElementById('memberTable');
-    if(data.length===0){ tableBody.innerHTML=`<tr><td colspan="4" class="p-16 text-center text-slate-400 font-bold uppercase italic">No matching records found in the directory.</td></tr>`; return;}
-    
-    tableBody.innerHTML=data.map(s=>`
-        <tr class="hover:bg-slate-50 transition">
-            <td class="px-6 py-4 border-r">
-                <div class="flex flex-col">
-                    <span class="text-[9px] font-black text-blue-800 uppercase mb-0.5">Full Name</span>
-                    <span class="text-sm font-extrabold text-slate-800 uppercase tracking-tight">${s.name}</span>
-                    <span class="text-[10px] text-slate-500 font-bold mt-1"><i class="fas fa-id-card-clip mr-1"></i> LIC: ${s.id}</span>
-                </div>
+function updateClock() {
+    document.getElementById('clock').innerText = new Date().toLocaleString('en-IN', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+
+async function loadData() {
+    const table = document.getElementById('memberTable');
+    table.innerHTML = `<tr><td colspan="4" class="p-20 text-center text-slate-400 font-bold animate-pulse uppercase tracking-widest">Accessing Secure Database...</td></tr>`;
+    try {
+        const response = await fetch(SHEET_URL);
+        const data = await response.text();
+        const rows = data.split('\n').slice(1);
+        surveyors = rows.map((row, i) => {
+            const c = row.split(',');
+            return { id: c[0]?.trim() || `TS-LS-${100+i}`, name: c[1]?.trim(), dist: c[2]?.trim(), mandal: c[3]?.trim(), status: c[4]?.trim() || 'Active', phone: c[5]?.trim() || 'N/A' };
+        }).filter(s => s.name);
+        populateDistricts();
+        renderTable(surveyors);
+    } catch(e) { table.innerHTML = `<tr><td colspan="4" class="p-20 text-center text-red-600 font-bold uppercase">Database Connection Error</td></tr>`; }
+}
+
+function populateDistricts() {
+    const select = document.getElementById('districtSelect');
+    const dists = [...new Set(surveyors.map(s => s.dist))].sort();
+    dists.forEach(d => { const o = document.createElement('option'); o.value = d; o.innerText = d; select.appendChild(o); });
+}
+
+function renderTable(data) {
+    const isAdmin = sessionStorage.getItem('isTSLSAdmin') === 'true';
+    document.getElementById('memberTable').innerHTML = data.map(s => `
+        <tr class="hover:bg-blue-50/50">
+            <td class="px-6 py-4">
+                <div class="text-[9px] font-black text-blue-900 uppercase">Surveyor Name</div>
+                <div class="text-sm font-extrabold text-slate-800 uppercase tracking-tight">${s.name}</div>
+                <div class="text-[10px] text-slate-400 font-bold mt-1">ID: ${s.id}</div>
             </td>
-            <td class="px-6 py-4 border-r hidden md:table-cell">
-                <div class="flex flex-col">
-                    <span class="text-[9px] font-black text-slate-400 uppercase mb-0.5">Jurisdiction</span>
-                    <span class="text-xs font-bold text-slate-700 uppercase">${s.mandal}</span>
-                    <span class="text-[10px] font-bold text-slate-500 uppercase">${s.dist} DIST</span>
-                </div>
+            <td class="px-6 py-4 hidden md:table-cell">
+                <div class="text-[9px] font-black text-slate-400 uppercase">Jurisdiction</div>
+                <div class="text-xs font-bold text-slate-700 uppercase">${s.mandal}, ${s.dist}</div>
             </td>
-            <td class="px-6 py-4 text-center border-r">
-                <span class="inline-block px-3 py-1 rounded text-[9px] font-black uppercase border ${s.status.toLowerCase()==='active'?'bg-green-50 text-green-700 border-green-200':'bg-red-50 text-red-700 border-red-200'}">
-                    ${s.status}
-                </span>
+            <td class="px-6 py-4 text-center">
+                <span class="px-3 py-1 rounded text-[9px] font-black uppercase border ${s.status.toLowerCase()==='active'?'bg-green-50 text-green-700 border-green-200':'bg-red-50 text-red-700 border-red-200'}">${s.status}</span>
             </td>
-            <td class="px-6 py-4 text-right">
-                <button onclick="printOfficialID('${s.id}')" class="text-xs font-black text-blue-900 border-b-2 border-blue-900 hover:text-orange-600 hover:border-orange-600 transition uppercase tracking-tighter pb-1">
-                    <i class="fas fa-print mr-1"></i> Print ID
-                </button>
+            <td class="px-6 py-4 text-right space-x-2">
+                <button onclick="prepareSinglePrint('${s.id}')" class="text-[10px] font-black text-blue-900 border-b-2 border-blue-900 uppercase">Print</button>
+                ${isAdmin ? `<button onclick="deleteRow('${s.id}')" class="text-[10px] font-black text-red-600 border-b-2 border-red-600 ml-4 uppercase">Delete</button>` : ''}
             </td>
         </tr>
     `).join('');
 }
 
-// ... rest of search/CSV/Print functions (keep your existing logic) ...
-// (Make sure to keep your searchSurveyors and populateDistricts functions from the previous code)
+function searchSurveyors() {
+    const n = document.getElementById('nameInput').value.toLowerCase();
+    const d = document.getElementById('districtSelect').value.toLowerCase();
+    const m = document.getElementById('mandalInput').value.toLowerCase();
+    const filtered = surveyors.filter(s => (s.name.toLowerCase().includes(n) || s.phone.includes(n)) && (d==="" || s.dist.toLowerCase()===d) && (s.mandal.toLowerCase().includes(m)));
+    renderTable(filtered);
+}
+
+// Print Functions
+function generateCardHTML(s, qrId) {
+    return `
+        <div class="bg-[#004d40] text-white p-4 text-center border-b-4 border-[#ff9933]">
+            <p class="text-[8px] font-black uppercase opacity-60">Telangana State</p>
+            <h3 class="serif-title text-base font-bold uppercase">Licensed Surveyor</h3>
+        </div>
+        <div class="watermark"><i class="fas fa-shield-halved"></i></div>
+        <div class="p-6 text-center">
+            <div class="w-20 h-20 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300 border"><i class="fas fa-user text-4xl"></i></div>
+            <h2 class="text-lg font-black text-slate-900 uppercase mb-1">${s.name}</h2>
+            <p class="text-[9px] font-mono font-bold text-blue-900 bg-blue-50 inline-block px-3 py-1 rounded-full mb-4">${s.id}</p>
+            <div class="border-y py-2 mb-4 text-left">
+                <p class="text-[7px] font-black text-slate-400 uppercase">Mandal / Dist</p>
+                <p class="text-[10px] font-bold text-slate-700 uppercase">${s.mandal} / ${s.dist}</p>
+            </div>
+            <div id="${qrId}" class="inline-block p-1 border rounded bg-white"></div>
+        </div>
+        <div class="absolute bottom-0 w-full bg-slate-50 p-3 border-t flex justify-between px-4">
+            <span class="text-[8px] font-black text-green-700 uppercase">● Verified</span>
+            <span class="text-[8px] font-bold text-slate-400">${new Date().toLocaleDateString()}</span>
+        </div>
+    `;
+}
+
+function prepareSinglePrint(id) {
+    const s = surveyors.find(x => x.id === id);
+    const container = document.getElementById('singleCardContent');
+    container.innerHTML = generateCardHTML(s, 'singleQR');
+    new QRCode(document.getElementById('singleQR'), { text: window.location.href + "?id=" + s.id, width: 70, height: 70 });
+    setTimeout(() => { window.print(); }, 500);
+}
+
+function printBulkIDs() {
+    const grid = document.getElementById('bulkGrid');
+    grid.innerHTML = '';
+    const visibleRows = Array.from(document.querySelectorAll('#memberTable tr'));
+    if(visibleRows.length === 0) return alert("No records to print");
+
+    surveyors.forEach((s, i) => {
+        // Logic to only print filtered results
+        const n = document.getElementById('nameInput').value.toLowerCase();
+        const m = document.getElementById('mandalInput').value.toLowerCase();
+        if(s.name.toLowerCase().includes(n) && s.mandal.toLowerCase().includes(m)) {
+            const div = document.createElement('div');
+            div.className = "pvc-card no-shadow";
+            div.style.pageBreakInside = "avoid";
+            div.innerHTML = generateCardHTML(s, `bulkQR-${i}`);
+            grid.appendChild(div);
+            new QRCode(document.getElementById(`bulkQR-${i}`), { text: window.location.href + "?id=" + s.id, width: 60, height: 60 });
+        }
+    });
+
+    document.body.classList.add('printing-bulk');
+    setTimeout(() => { window.print(); document.body.classList.remove('printing-bulk'); }, 1000);
+}
+
+// Admin Logic
+function checkLogin() {
+    if(document.getElementById('adminPass').value === "admin123") {
+        sessionStorage.setItem('isTSLSAdmin', 'true');
+        location.reload();
+    } else { alert("Wrong Password"); }
+}
+function checkAdminState() {
+    if(sessionStorage.getItem('isTSLSAdmin') === 'true') {
+        document.getElementById('adminBadge').classList.remove('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
+    }
+}
+function logout() { sessionStorage.removeItem('isTSLSAdmin'); location.reload(); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+function showLegal(type) {
+    document.getElementById('modalTitle').innerText = type === 'privacy' ? 'Privacy Policy' : 'Terms of Use';
+    document.getElementById('modalContent').innerHTML = type === 'privacy' ? '<p>Data displayed is for professional verification. We do not store personal non-professional data.</p>' : '<p>This is a community-run registry. Users must verify credentials officially before engagement.</p>';
+    document.getElementById('legalModal').classList.remove('hidden');
+}
+function showLogin() { document.getElementById('loginModal').classList.remove('hidden'); }
+
+init();
 </script>
 </body>
 </html>
