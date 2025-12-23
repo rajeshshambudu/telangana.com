@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | TSLSA</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+<div class="max-w-5xl mx-auto p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">Logout</button>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-xl font-bold mb-4">Manage Surveyor Records</h2>
+        <p class="text-sm text-slate-500 mb-4">Add, edit, or remove surveyors in the directory.</p>
+        <button class="bg-blue-700 text-white px-4 py-2 rounded-xl hover:bg-blue-800 transition" onclick="alert('Feature coming soon!')">Add New Surveyor</button>
+    </div>
+</div>
+
+<script>
+// Redirect if not logged in
+if (localStorage.getItem("staffLoggedIn") !== "true") {
+    window.location.href = "login.html";
+}
+
+// Logout function
+function logout() {
+    localStorage.removeItem("staffLoggedIn");
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html>
