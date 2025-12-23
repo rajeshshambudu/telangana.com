@@ -91,13 +91,30 @@ tbody tr:hover { background-color: #e0f2fe; }
     <i class="fas fa-search absolute left-4 top-4 text-slate-400"></i>
     <input type="text" id="nameInput" onkeyup="searchSurveyors()" placeholder="Name or Phone..." class="w-full pl-12 p-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 transition">
   </div>
-  <select id="districtSelect" onchange="searchSurveyors()" class="p-4 border rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-900 font-semibold text-slate-600">
-    <option value="">All Districts</option>
-    <option value="Nizamabad">Nizamabad</option>
-    <option value="Hyderabad">Hyderabad</option>
-    <option value="Warangal">Warangal</option>
-    <option value="Rangareddy">Rangareddy</option>
-  </select>
+
+
+<select id="districtSelect" onchange="searchSurveyors()" class="p-4 border rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-900 font-semibold text-slate-600">
+  <!-- Options will be populated by JS -->
+</select>
+
+<script>
+  const districts = ["All Districts", "Nizamabad", "Hyderabad", "Warangal", "Rangareddy"];
+  const districtSelect = document.getElementById("districtSelect");
+  
+  districts.forEach(d => {
+    const option = document.createElement("option");
+    option.value = d === "All Districts" ? "" : d;
+    option.textContent = d;
+    districtSelect.appendChild(option);
+  });
+</script>
+
+
+
+
+
+
+  
   <input type="text" id="mandalInput" onkeyup="searchSurveyors()" placeholder="Filter Mandal..." class="p-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-900 transition">
   <button onclick="exportToCSV()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold rounded-xl py-4 transition flex items-center justify-center gap-2 shadow-lg">
     <i class="fas fa-file-csv"></i> Export CSV
