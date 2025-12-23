@@ -170,8 +170,14 @@
         let surveyors = [];
         
         // --- STEP 1: Replace this URL with your Published Google Sheet CSV link ---
-        const SHEET_CSV_URL = 'YOUR_CSV_URL_HERE';
+        
 
+// To this (paste your link inside the quotes):
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1tUvTI2LUqhseJZdvEqdTRRlSsJGwQKgmUm6kTFXuaDE/edit?usp=drivesdk';
+        
+
+
+        
         async function loadData() {
             const tableBody = document.getElementById('memberTable');
             tableBody.innerHTML = `<tr><td colspan="5" class="p-12 text-center text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i> Initializing Secure Connection...</td></tr>`;
