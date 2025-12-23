@@ -12,26 +12,16 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         .gov-navy { background-color: #002147; }
         .hero-gradient { background: linear-gradient(135deg, #002147 0%, #003366 100%); }
 
-        /* Print Logic */
         @media print {
             body * { visibility: hidden; }
             #printSection, #printSection * { visibility: visible; }
-            #printSection { 
-                position: absolute; 
-                left: 0; 
-                top: 0; 
-                width: 100%; 
-                display: block !important;
-                border: none !important;
-            }
+            #printSection { position: absolute; left: 0; top: 0; width: 100%; display: block !important; border: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
-
         #printSection { max-width: 800px; margin: 0 auto; }
     </style>
 </head>
@@ -40,266 +30,217 @@
     <nav class="bg-white border-b-4 border-orange-500 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-24 flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <div class="bg-slate-100 p-2 rounded">
-                    <i class="fas fa-monument text-3xl text-blue-900"></i>
-                </div>
+                <div class="bg-slate-100 p-2 rounded"><i class="fas fa-monument text-3xl text-blue-900"></i></div>
                 <div>
                     <h1 class="text-xl font-bold text-blue-900 leading-none">TSLSA</h1>
-                    <p class="text-[10px] md:text-xs uppercase tracking-widest text-slate-500 font-bold mt-1">Telangana State Licensed Surveyors Association</p>
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mt-1">Telangana State Licensed Surveyors Association</p>
                 </div>
             </div>
             <div class="hidden md:flex space-x-6 text-sm font-bold text-slate-700 uppercase tracking-wider">
-                <a href="#home" class="hover:text-blue-900">Home</a>
-                <a href="#directory" class="hover:text-blue-900">Directory</a>
+                <a href="#" class="hover:text-blue-900">Home</a>
+                <a href="#directory" class="hover:text-blue-900">Verification</a>
             </div>
         </div>
     </nav>
 
-    <header id="home" class="hero-gradient text-white py-16">
+    <header class="hero-gradient text-white py-12">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <h2 class="text-4xl font-extrabold mb-4">Land Record Integrity Portal</h2>
-            <p class="text-blue-100 text-lg max-w-2xl mx-auto">Official verification system for licensed land surveyors in the State of Telangana.</p>
+            <h2 class="text-3xl font-extrabold mb-2">Surveyor Authentication System</h2>
+            <p class="text-blue-100 text-sm max-w-2xl mx-auto">Verify credentials and license validity of TSLSA members instantly.</p>
         </div>
     </header>
 
-    <main class="py-12 max-w-7xl mx-auto px-4">
+    <main class="py-8 max-w-7xl mx-auto px-4">
         
-        <div id="verifyBanner" class="hidden bg-green-50 border-2 border-green-500 p-4 rounded-xl mb-8 flex items-center gap-4 animate-fade-in">
+        <div id="verifyBanner" class="hidden bg-green-50 border-2 border-green-500 p-4 rounded-xl mb-8 flex items-center gap-4">
             <div class="bg-green-500 text-white p-3 rounded-full"><i class="fas fa-shield-check"></i></div>
-            <div>
-                <h4 class="font-bold text-green-900">Official Record Verified</h4>
-                <p class="text-sm text-green-700">This surveyor is currently registered in the live TSLSA database.</p>
+            <div class="flex-1">
+                <h4 class="font-bold text-green-900">Official Profile Verified</h4>
+                <p class="text-sm text-green-700">This surveyor is registered in the live Association database.</p>
             </div>
-            <button onclick="window.location.href='index.html'" class="ml-auto text-xs font-bold text-green-800 underline">Show All</button>
+            <button onclick="window.location.href=window.location.pathname" class="text-xs font-bold text-green-800 underline">Show All Members</button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="relative">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3 mb-8">
+            <div class="lg:col-span-2 relative">
                 <i class="fas fa-search absolute left-4 top-4 text-slate-400"></i>
-                <input type="text" id="nameInput" onkeyup="searchSurveyors()" placeholder="Name / License No..." class="w-full pl-12 p-4 border rounded-lg outline-none focus:ring-2 focus:ring-blue-900">
+                <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Name, ID, or Phone..." class="w-full pl-11 p-4 border rounded-lg focus:ring-2 focus:ring-blue-900 outline-none">
             </div>
-            <select id="districtSelect" onchange="searchSurveyors()" class="p-4 border rounded-lg bg-white outline-none focus:ring-2 focus:ring-blue-900">
+            <select id="distFilter" onchange="filterData()" class="p-4 border rounded-lg bg-white outline-none">
                 <option value="">All Districts</option>
                 <option value="Nizamabad">Nizamabad</option>
                 <option value="Hyderabad">Hyderabad</option>
                 <option value="Warangal">Warangal</option>
-                <option value="Rangareddy">Rangareddy</option>
             </select>
-            <input type="text" id="mandalInput" onkeyup="searchSurveyors()" placeholder="Filter Mandal..." class="p-4 border rounded-lg outline-none focus:ring-2 focus:ring-blue-900">
-            <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg py-4 transition flex items-center justify-center gap-2">
-                <i class="fas fa-file-csv"></i> Export CSV
+            <select id="statusFilter" onchange="filterData()" class="p-4 border rounded-lg bg-white outline-none">
+                <option value="">All Status</option>
+                <option value="Active">Active Only</option>
+                <option value="Expired">Expired Only</option>
+            </select>
+            <button id="expiryBtn" onclick="toggleExpiryOnly()" class="border-2 border-orange-500 text-orange-600 font-bold rounded-lg py-4 transition flex items-center justify-center gap-2">
+                <i class="fas fa-clock"></i> Expiring Soon
+            </button>
+            <button onclick="exportCSV()" class="bg-emerald-600 text-white font-bold rounded-lg py-4 hover:bg-emerald-700 transition flex items-center justify-center gap-2">
+                <i class="fas fa-file-csv"></i> Export
             </button>
         </div>
 
-        <div id="directory" class="bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+        <div id="directory" class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-50 border-b-2 border-slate-100">
+                <table class="w-full text-left">
+                    <thead class="bg-slate-50 border-b">
                         <tr>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">License</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">License No</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase">Surveyor Details</th>
-                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase hidden md:table-cell">Jurisdiction</th>
+                            <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase hidden md:table-cell">Location & Contact</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-center">Status</th>
                             <th class="px-6 py-4 text-xs font-bold text-slate-500 uppercase text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="memberTable" class="divide-y divide-slate-100">
-                        </tbody>
+                    <tbody id="dataTable" class="divide-y divide-slate-100">
+                        <tr><td colspan="5" class="p-12 text-center text-slate-400">Loading live data...</td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>
     </main>
 
-    <div id="printSection" class="hidden p-8 bg-white text-black border-[12px] border-double border-slate-300 rounded-sm">
+    <div id="printSection" class="hidden p-8 bg-white border-[10px] border-double border-slate-300">
         <div class="flex items-center justify-between border-b-4 border-orange-500 pb-4 mb-6">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center text-white">
-                    <i class="fas fa-monument text-2xl"></i>
-                </div>
+                <div class="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center text-white"><i class="fas fa-monument"></i></div>
                 <div>
-                    <h1 class="text-xl font-bold uppercase tracking-tight text-blue-900">Telangana State Licensed Surveyors Association</h1>
-                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Department of Land Records & Survey</p>
+                    <h1 class="text-xl font-bold text-blue-900">TSLSA OFFICIAL LICENSE</h1>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Department of Land Records & Survey Verification</p>
                 </div>
             </div>
         </div>
         <div class="grid grid-cols-3 gap-6">
             <div class="col-span-2 space-y-4">
-                <div>
-                    <p class="text-[10px] uppercase font-bold text-slate-400">Full Name</p>
-                    <h2 id="printName" class="text-3xl font-extrabold text-slate-800 uppercase"></h2>
-                </div>
+                <div><p class="text-[10px] uppercase font-bold text-slate-400">Name of Member</p><h2 id="pName" class="text-3xl font-bold uppercase text-slate-800"></h2></div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-slate-400">License Number</p>
-                        <p id="printID" class="font-mono font-bold text-blue-800 text-lg"></p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-slate-400">Status</p>
-                        <p class="text-green-700 font-bold text-lg uppercase">● Active Member</p>
-                    </div>
-                </div>
-                <div class="pt-4 border-t border-slate-100">
-                    <p class="text-[10px] uppercase font-bold text-slate-400">Jurisdiction</p>
-                    <p class="font-semibold text-slate-700"><span id="printMandal"></span>, <span id="printDist"></span></p>
+                    <div><p class="text-[10px] uppercase font-bold text-slate-400">License ID</p><p id="pID" class="font-mono font-bold text-blue-800 text-lg"></p></div>
+                    <div><p class="text-[10px] uppercase font-bold text-slate-400">Jurisdiction</p><p class="text-sm font-bold"><span id="pMandal"></span>, <span id="pDist"></span></p></div>
                 </div>
             </div>
-            <div class="flex flex-col items-center justify-center border-l border-slate-200 pl-6">
-                <div id="qrcode" class="mb-2 p-1 border-2 border-slate-50"></div>
-                <p class="text-[8px] font-bold text-center text-blue-900 uppercase">Scan to Verify Official Record</p>
+            <div class="flex flex-col items-center justify-center border-l pl-4">
+                <div id="qrcode"></div>
+                <p class="text-[9px] font-bold text-blue-900 mt-2 uppercase">Scan to Verify</p>
             </div>
         </div>
-        <div class="flex justify-between items-end mt-12">
-            <div class="text-center"><div class="w-32 border-b border-slate-400 mb-1"></div><p class="text-[8px] font-bold uppercase text-slate-500">Authorized Official</p></div>
-            <div class="text-right">
-                <p class="text-[8px] text-slate-400 italic">This is a system-generated document based on live TSLSA records.</p>
-                <p class="text-[8px] text-slate-400">Issued On: <span id="printDate" class="font-bold"></span></p>
-            </div>
+        <div class="mt-12 flex justify-between items-end">
+            <div class="text-center"><div class="w-32 border-b border-slate-400 mb-1"></div><p class="text-[8px] font-bold uppercase">Authorized Signatory</p></div>
+            <p class="text-[8px] text-slate-400">System Verified On: <span id="pDate"></span></p>
         </div>
     </div>
 
-    <footer class="gov-navy text-white py-12 text-center">
-        <p class="text-sm opacity-60">&copy; 2025 Telangana State Licensed Surveyors Association. All Rights Reserved.</p>
-        <div class="mt-4 flex justify-center gap-6 text-xs opacity-50">
-            <span>Privacy Policy</span>
-            <span>Terms of Use</span>
-            <a href="#" class="hover:text-white underline">Staff Login</a>
-        </div>
-    </footer>
-
     <script>
-        let surveyors = [];
-        
-        // --- STEP 1: Replace this URL with your Published Google Sheet CSV link ---
-        
+        let rawData = [];
+        let expiringOnly = false;
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/1GTQ3JvpM3f6VeEvAjFzQtXAFSwXSU-M8ZAuBRrUuic8/export?format=csv';
 
-// To this (paste your link inside the quotes):
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1tUvTI2LUqhseJZdvEqdTRRlSsJGwQKgmUm6kTFXuaDE/edit?usp=drivesdk';
-        
-
-
-        
-        async function loadData() {
-            const tableBody = document.getElementById('memberTable');
-            tableBody.innerHTML = `<tr><td colspan="5" class="p-12 text-center text-slate-400"><i class="fas fa-spinner fa-spin mr-2"></i> Initializing Secure Connection...</td></tr>`;
-
+        async function init() {
             try {
-                const response = await fetch(SHEET_CSV_URL);
-                const csvData = await response.text();
-                
-                // Parse CSV Rows (Handling basic commas)
-                const rows = csvData.split('\n').slice(1);
-                surveyors = rows.map(row => {
-                    const cols = row.split(',');
-                    return {
-                        id: cols[0]?.trim(),
-                        name: cols[1]?.trim(),
-                        dist: cols[2]?.trim(),
-                        mandal: cols[3]?.trim(),
-                        status: cols[4]?.trim()
-                    };
-                }).filter(s => s.id && s.name);
+                const res = await fetch(CSV_URL);
+                const text = await res.text();
+                const rows = text.split('\n').slice(1);
+                rawData = rows.map(row => {
+                    const c = row.split(',');
+                    return { id: c[0]?.trim(), name: c[1]?.trim(), dist: c[2]?.trim(), mandal: c[3]?.trim(), status: c[4]?.trim(), phone: c[5]?.trim(), expiry: c[6]?.trim() };
+                }).filter(r => r.id);
 
-                // Verification Check (via URL Params)
-                const urlParams = new URLSearchParams(window.location.search);
-                const verifyId = urlParams.get('id');
-
-                if (verifyId) {
+                const urlId = new URLSearchParams(window.location.search).get('id');
+                if(urlId) {
                     document.getElementById('verifyBanner').classList.remove('hidden');
-                    const found = surveyors.filter(s => s.id === verifyId);
-                    renderTable(found);
-                    if (found.length > 0) showToast(found[0].name);
+                    render(rawData.filter(x => x.id === urlId));
                 } else {
-                    renderTable(surveyors);
+                    render(rawData);
                 }
-            } catch (err) {
-                console.error("Connection Error:", err);
-                tableBody.innerHTML = `<tr><td colspan="5" class="p-12 text-center text-red-500 font-bold">Error: Unable to reach database. Please refresh.</td></tr>`;
+            } catch(e) {
+                document.getElementById('dataTable').innerHTML = `<tr><td colspan="5" class="p-12 text-center text-red-500">Database Connection Error.</td></tr>`;
             }
         }
 
-        function renderTable(data) {
-            const tableBody = document.getElementById('memberTable');
-            if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="p-12 text-center text-slate-400">No surveyors match your search criteria.</td></tr>`;
-                return;
-            }
+        function render(data) {
+            const table = document.getElementById('dataTable');
+            const today = new Date();
+            const nextMonth = new Date(); nextMonth.setDate(today.getDate() + 30);
 
-            tableBody.innerHTML = data.map(s => `
-                <tr class="hover:bg-blue-50/50 transition">
-                    <td class="px-6 py-5 font-mono font-bold text-blue-900 text-sm">${s.id}</td>
+            if(data.length === 0) { table.innerHTML = '<tr><td colspan="5" class="p-10 text-center">No results found.</td></tr>'; return; }
+
+            table.innerHTML = data.map(s => {
+                const expDate = new Date(s.expiry);
+                const isExpired = expDate < today;
+                const isSoon = expDate > today && expDate <= nextMonth;
+
+                return `
+                <tr class="hover:bg-blue-50/50 transition border-b">
+                    <td class="px-6 py-5 font-mono font-bold text-blue-800">${s.id}</td>
                     <td class="px-6 py-5">
                         <div class="font-bold text-slate-800">${s.name}</div>
-                        <div class="md:hidden text-[10px] text-slate-500 uppercase mt-1">${s.mandal}, ${s.dist}</div>
+                        ${isSoon ? '<span class="text-[9px] text-orange-600 font-bold uppercase animate-pulse">Renewal Due Soon</span>' : ''}
+                        ${isExpired ? '<span class="text-[9px] text-red-600 font-bold uppercase">Expired</span>' : ''}
                     </td>
-                    <td class="px-6 py-5 text-sm text-slate-500 hidden md:table-cell">${s.mandal}, ${s.dist}</td>
+                    <td class="px-6 py-5 text-sm text-slate-500 hidden md:table-cell">
+                        <i class="fas fa-phone mr-1"></i> ${s.phone || 'N/A'}<br>
+                        <i class="fas fa-map-marker-alt mr-1"></i> ${s.mandal}, ${s.dist}
+                    </td>
                     <td class="px-6 py-5 text-center">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${s.status.toLowerCase() === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                            ${s.status}
-                        </span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${isExpired ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">${isExpired ? 'Inactive' : s.status}</span>
                     </td>
                     <td class="px-6 py-5 text-right">
-                        <button onclick="printOfficialID('${s.id}')" class="bg-slate-100 hover:bg-blue-900 hover:text-white p-2.5 rounded-lg transition duration-300">
-                            <i class="fas fa-print"></i>
-                        </button>
+                        <button onclick="doPrint('${s.id}')" class="bg-slate-100 hover:bg-blue-900 hover:text-white p-2.5 rounded-lg transition"><i class="fas fa-print"></i></button>
                     </td>
-                </tr>
-            `).join('');
+                </tr>`;
+            }).join('');
         }
 
-        function searchSurveyors() {
-            const name = document.getElementById('nameInput').value.toLowerCase();
-            const dist = document.getElementById('districtSelect').value.toLowerCase();
-            const mandal = document.getElementById('mandalInput').value.toLowerCase();
+        function filterData() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const d = document.getElementById('distFilter').value.toLowerCase();
+            const st = document.getElementById('statusFilter').value;
+            const today = new Date();
+            const nextMonth = new Date(); nextMonth.setDate(today.getDate() + 30);
 
-            const filtered = surveyors.filter(s => 
-                (s.name.toLowerCase().includes(name) || s.id.toLowerCase().includes(name)) &&
-                (dist === "" || s.dist.toLowerCase() === dist) &&
-                (s.mandal.toLowerCase().includes(mandal))
-            );
-            renderTable(filtered);
-        }
-
-        function printOfficialID(licenseId) {
-            const s = surveyors.find(item => item.id === licenseId);
-            if(!s) return;
-
-            document.getElementById('printID').innerText = s.id;
-            document.getElementById('printName').innerText = s.name;
-            document.getElementById('printMandal').innerText = s.mandal;
-            document.getElementById('printDist').innerText = s.dist;
-            document.getElementById('printDate').innerText = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric'});
-            
-            const qrContainer = document.getElementById("qrcode");
-            qrContainer.innerHTML = "";
-            new QRCode(qrContainer, {
-                text: window.location.origin + window.location.pathname + "?id=" + s.id,
-                width: 100,
-                height: 100,
-                colorDark: "#002147"
+            const filtered = rawData.filter(s => {
+                const expDate = new Date(s.expiry);
+                const isSoon = expDate > today && expDate <= nextMonth;
+                const matches = (s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || (s.phone && s.phone.includes(q))) &&
+                                (d === "" || s.dist.toLowerCase() === d) &&
+                                (st === "" || s.status === st);
+                return expiringOnly ? (matches && isSoon) : matches;
             });
-
-            setTimeout(() => { window.print(); }, 600);
+            render(filtered);
         }
 
-        function exportToCSV() {
-            let csv = "License No,Name,District,Mandal,Status\n" + surveyors.map(s => `"${s.id}","${s.name}","${s.dist}","${s.mandal}","${s.status}"`).join("\n");
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `TSLSA_Surveyors_Report_${new Date().toLocaleDateString()}.csv`;
-            a.click();
+        function toggleExpiryOnly() {
+            expiringOnly = !expiringOnly;
+            const b = document.getElementById('expiryBtn');
+            b.className = expiringOnly ? "bg-orange-500 text-white font-bold rounded-lg py-4 flex items-center justify-center gap-2" : "border-2 border-orange-500 text-orange-600 font-bold rounded-lg py-4 flex items-center justify-center gap-2";
+            filterData();
         }
 
-        function showToast(name) {
-            const t = document.createElement('div');
-            t.className = "fixed bottom-10 left-1/2 -translate-x-1/2 bg-blue-900 text-white px-8 py-4 rounded-full shadow-2xl z-[100] font-bold flex items-center gap-3 animate-bounce border-2 border-orange-500";
-            t.innerHTML = `<i class="fas fa-check-circle text-orange-400"></i> Authenticated Record: ${name}`;
-            document.body.appendChild(t);
-            setTimeout(() => t.remove(), 6000);
+        function doPrint(id) {
+            const s = rawData.find(x => x.id === id);
+            document.getElementById('pName').innerText = s.name;
+            document.getElementById('pID').innerText = s.id;
+            document.getElementById('pMandal').innerText = s.mandal;
+            document.getElementById('pDist').innerText = s.dist;
+            document.getElementById('pDate').innerText = new Date().toLocaleDateString();
+            const qr = document.getElementById("qrcode");
+            qr.innerHTML = "";
+            new QRCode(qr, { text: window.location.origin + window.location.pathname + "?id=" + s.id, width: 100, height: 100 });
+            setTimeout(() => { window.print(); }, 500);
         }
 
-        loadData();
+        function exportCSV() {
+            let c = "License,Name,District,Mandal,Status,Phone,Expiry\n" + rawData.map(s => `"${s.id}","${s.name}","${s.dist}","${s.mandal}","${s.status}","${s.phone}","${s.expiry}"`).join("\n");
+            const b = new Blob([c], { type: 'text/csv' });
+            const u = URL.createObjectURL(b);
+            const a = document.createElement('a'); a.href = u; a.download = 'Surveyor_Data.csv'; a.click();
+        }
+
+        init();
     </script>
 </body>
 </html>
