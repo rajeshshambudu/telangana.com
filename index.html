@@ -1,11 +1,11 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <meta name="google-site-verification" content="70e1478d5a76b2ca" />
-    
     <title>Telangana State Licensed Surveyors | Community Portal</title>
     <meta name="description" content="Verified directory of Telangana State Licensed Surveyors. Search by district and mandal to find active licensed professionals.">
 
@@ -21,7 +21,7 @@
         @media print {
             body * { visibility: hidden; }
             #printSection, #printSection * { visibility: visible; }
-            #printSection { position: absolute; left: 0; top: 0; width: 100%; display: block !important; }
+            #printSection { position: absolute; left: 0; top: 0; width: 100%; display: block !important; border: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
         #printSection { max-width: 800px; margin: 0 auto; }
@@ -43,10 +43,6 @@
   </div>
 </nav>
 
-
-
-
-
 <header id="home" class="hero-gradient text-white py-16">
   <div class="max-w-7xl mx-auto px-4 text-center">
     <h2 class="text-4xl font-extrabold mb-4 uppercase tracking-tight">
@@ -57,9 +53,6 @@
     </p>
   </div>
 </header>
-    
-
-
     
 <main class="py-12 max-w-7xl mx-auto px-4">
     <div id="verifyBanner" class="hidden bg-green-50 border-2 border-green-500 p-4 rounded-xl mb-8 flex items-center gap-4 shadow-md">
@@ -113,16 +106,19 @@
     <div class="col-span-2 space-y-6">
       <div><p class="text-[10px] uppercase font-black text-slate-400">Professional Name</p><h2 id="printName" class="text-4xl font-black text-slate-900 uppercase"></h2></div>
       <div><p class="text-[10px] uppercase font-black text-slate-400">Status</p><p id="printStatusText" class="font-bold text-xl uppercase flex items-center gap-2"></p></div>
-      <div class="pt-6 border-t border-slate-100"><p class="text-[10px] uppercase font-black text-slate-400">Jurisdiction</p><p class="text-xl font-bold text-slate-700 uppercase"><span id="printMandal"></span>, <span id="printDist"></span></p></div>
+      <div class="pt-6 border-t border-slate-100">
+          <p class="text-[10px] uppercase font-black text-slate-400">Jurisdiction</p>
+          <p class="text-xl font-bold text-slate-700 uppercase"><span id="printMandal"></span>, <span id="printDist"></span></p>
+          <p class="text-[10px] mt-4 text-slate-400">Verified On: <span id="printDate"></span></p>
+      </div>
     </div>
-    <div class="flex flex-col items-center justify-center border-l-2 border-slate-100 pl-10"><div id="qrcode" class="mb-3"></div></div>
+    <div class="flex flex-col items-center justify-center border-l-2 border-slate-100 pl-10">
+        <div id="qrcode" class="mb-3"></div>
+        <p class="text-[8px] uppercase font-bold text-slate-400">Scan to Verify</p>
+    </div>
   </div>
 </div>
 
-
-
-
-<!-- Footer -->
 <footer class="gov-navy text-white py-12 text-center">
   <p class="text-sm opacity-60 font-medium tracking-wide">&copy; 2025 Telangana State Licensed Surveyors Community. All Rights Reserved.</p>
   <div class="mt-6 flex justify-center gap-8 text-xs font-bold opacity-40 uppercase tracking-widest">
@@ -130,17 +126,10 @@
     <span>Terms of Use</span>
     <a href="#" class="hover:text-white underline">Staff Login</a>
   </div>
-  <p class="text-xs opacity-60 mt-4">
-    Disclaimer: This is a <strong>community-driven portal</strong> for Telangana licensed surveyors. 
-    It is <strong>not officially affiliated with TSLSA</strong> or any government authority. 
-    Information is provided by registered members and publicly available records.
+  <p class="text-xs opacity-60 mt-4 max-w-2xl mx-auto px-4">
+    Disclaimer: This is a <strong>community-driven portal</strong>. It is <strong>not officially affiliated with TSLSA</strong> or any government authority. Information is provided by registered members.
   </p>
 </footer>
-    
-
-
-
-
     
 <script>
 let surveyors = [];
@@ -159,7 +148,7 @@ async function loadData() {
 
     surveyors = rows.map((row, index) => {
       const cols = row.split(',');
-      const rawExpiryDate = cols[6]?.trim(); // Column G
+      const rawExpiryDate = cols[6]?.trim(); 
       const expiryDate = rawExpiryDate ? new Date(rawExpiryDate) : null;
       let calculatedStatus = cols[4]?.trim() || 'Active';
       if (expiryDate && expiryDate < today) { calculatedStatus = 'Expired'; }
@@ -229,26 +218,40 @@ function searchSurveyors() {
 function printOfficialID(id) {
   const s = surveyors.find(i => i.id === id);
   if(!s) return;
+  
   document.getElementById('printName').innerText = s.name;
   document.getElementById('printMandal').innerText = s.mandal;
   document.getElementById('printDist').innerText = s.dist;
-  document.getElementById('printDate').innerText = new Date().toLocaleDateString();
+  document.getElementById('printDate').innerText = new Date().toLocaleDateString('en-IN');
+  
   const statusEl = document.getElementById('printStatusText');
   statusEl.className = s.status === 'Active' ? 'text-green-700 font-bold' : 'text-red-700 font-bold';
   statusEl.innerText = s.status + " Member";
+  
   const qrContainer = document.getElementById("qrcode");
   qrContainer.innerHTML = "";
-  new QRCode(qrContainer, { text: window.location.href + "?id=" + s.id, width: 100, height: 100 });
-  setTimeout(() => window.print(), 500);
+  
+  // Create clean verification URL
+  const baseUrl = window.location.protocol + '//' + window.location.host + window.location.pathname;
+  new QRCode(qrContainer, { text: baseUrl + "?id=" + s.id, width: 100, height: 100 });
+  
+  setTimeout(() => window.print(), 600);
 }
 
 function exportToCSV() {
-  let csv = "Name,District,Mandal,Status,Phone\n" + surveyors.map(s => `"${s.name}","${s.dist}","${s.mandal}","${s.status}","${s.phone}"`).join("\n");
-  const blob = new Blob([csv], { type: 'text/csv' });
+  let csv = "Name,District,Mandal,Status,Phone\n" + 
+            surveyors.map(s => `"${s.name}","${s.dist}","${s.mandal}","${s.status}","${s.phone}"`).join("\n");
+  
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  
+  a.href = url;
   a.download = "Surveyor_Directory.csv";
+  document.body.appendChild(a); 
   a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 loadData();
