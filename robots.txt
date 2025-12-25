@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rajeshshambudu.github.io/telangana.com/sitemap.xml
